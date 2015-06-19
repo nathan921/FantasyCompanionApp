@@ -32,6 +32,9 @@ public class DataStore {
     }
 
     public LeagueData getLeague() {
+        if (mLeague == null) {
+            mLeague = new LeagueData();
+        }
         return mLeague;
     }
 }

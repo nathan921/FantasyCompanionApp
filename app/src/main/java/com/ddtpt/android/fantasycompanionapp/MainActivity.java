@@ -104,18 +104,6 @@ public abstract class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Uri uri = intent.getData();
-        if (uri != null && uri.getScheme().equals("yahooapi")) {
-            //Event bus back to the DataGatherUtils class to get the data using the
-            //mProvider.retrieveAccessToken function
-            mDataGatherUtils.parseAccessToken(uri);
-        }
-
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
@@ -123,5 +111,17 @@ public abstract class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Uri uri = intent.getData();
+        if (uri != null && uri.getScheme().equals("yffa")) {
+            //Event bus back to the DataGatherUtils class to get the data using the
+            //mProvider.retrieveAccessToken function
+            mDataGatherUtils.parseAccessToken(uri);
+        }
+
     }
 }

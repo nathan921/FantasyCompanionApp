@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.JsonElement;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -17,8 +20,18 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
 
 /**
  * Created by e228596 on 6/17/2015.
@@ -29,8 +42,9 @@ public class DataGatherUtils {
     private static final String SECRET = "oauth_secret";
     private static final String TOKEN = "oauth_token";
     private static final String SESSION = "oauth_session_handle";
+    private static final String VERIFIER = "verifier";
 
-    private static final String BASE_URL = "http://fantasysports.yahooapis.com/fantasy/v2/";
+    private static final String BASE_URL = "http://fantasysports.yahooapis.com/fantasy/v2";
     private static final String GET_TOKEN = "https://api.login.yahoo.com/oauth/v2/get_token";
 
 
@@ -75,13 +89,13 @@ public class DataGatherUtils {
 
     private Context mContext;
     private Boolean mHasAccessToken;
-    private OAuthProvider mProvider;
-    private OAuthConsumer mConsumer;
+    private CommonsHttpOAuthProvider mProvider;
+    private CommonsHttpOAuthConsumer mConsumer;
     private SharedPreferences mPrefs;
     private Bus mBus;
     private YahooApi mService;
     private RestAdapter mRestAdapter;
-    String mToken, mSecret;
+    String mToken, mSecret, mOAuthVerifier;
 
     public DataGatherUtils(Context c) {
         mContext = c;
@@ -89,54 +103,101 @@ public class DataGatherUtils {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mBus = BusProvider.getInstance();
         mBus.register(this);
-        String sessionString;
         
         mToken = mPrefs.getString(TOKEN, "");
         mSecret = mPrefs.getString(SECRET, "");
-        sessionString = mPrefs.getString(SESSION, "");
+        mOAuthVerifier = "";
+        String sessionString = mPrefs.getString(SESSION, "");
 
-        mConsumer = new DefaultOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+        mConsumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 
-        mProvider = new DefaultOAuthProvider(
+        mProvider = new CommonsHttpOAuthProvider(
                 "https://api.login.yahoo.com/oauth/v2/get_request_token",
-                "https://api.login.yahoo.com/oauth/v2/request_auth",
-                "https://api.login.yahoo.com/oauth/v2/get_token"
+                "https://api.login.yahoo.com/oauth/v2/get_access_token",
+                "https://api.login.yahoo.com/oauth/v2/request_auth"
         );
+
         mProvider.setOAuth10a(true);
 
-        if (!mToken.equals("") && !mSecret.equals("") && !sessionString.equals("")) {
+        if (!mToken.equals("") && !mSecret.equals("")) {
             mHasAccessToken = true;
         }
     }
 
     public void getAccessToken() {
-        String authUrl;
-        try {
-            authUrl = mProvider.retrieveRequestToken(mConsumer, OAuth.OUT_OF_BAND);
-            Log.i(TAG, "Yahoo URL: " + authUrl);
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)).setFlags(
-                    Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_FROM_BACKGROUND);
-            mContext.startActivity(intent);
-        } catch(Exception e) {
-            Log.e(TAG, e.toString());
-        }
+        //call Async task for OAuthRequestTokenTask.execute();
+        new OAuthRequestTokenTask(mContext, mConsumer, mProvider).execute();
     }
 
     public void parseAccessToken(Uri uri) {
-        final String oauth_verifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
-        try {
-            mProvider.retrieveAccessToken(mConsumer, oauth_verifier);
+        mOAuthVerifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
+        new OAuthGetAccessTokenTask().execute();
+        //call the OAuthGetAccessTokenTask with the verifier
+    }
 
-            final SharedPreferences.Editor edit = mPrefs.edit();
-            edit.putString(TOKEN, mConsumer.getToken());
-            edit.putString(SECRET, mConsumer.getTokenSecret());
-            edit.commit();
+    class OAuthRequestTokenTask extends AsyncTask<Void, Void, String> {
+        private Context context;
+        private CommonsHttpOAuthProvider provider;
+        private CommonsHttpOAuthConsumer consumer;
 
+        public OAuthRequestTokenTask(Context c, CommonsHttpOAuthConsumer con, CommonsHttpOAuthProvider prov) {
+            context = c;
+            consumer = con;
+            provider = prov;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                Log.i(TAG, "Retrieving request token from Yahoo");
+                final String authUrl = provider.retrieveRequestToken(consumer, "yffa://www.ddtpt.com");
+                Log.i(TAG, "AUTHORIZATION URL: " + authUrl);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)).setFlags(
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_FROM_BACKGROUND);
+                context.startActivity(intent);
+
+                return authUrl;
+            } catch (Exception e) {
+                Log.e(TAG, "ERROR: " + e.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i(TAG, "onPostExecute Result: " + result);
+            super.onPostExecute(result);
+        }
+
+    }
+
+    public class OAuthGetAccessTokenTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            try {
+                mProvider.retrieveAccessToken(mConsumer, mOAuthVerifier);
+            } catch (OAuthCommunicationException e) {
+                e.printStackTrace();
+            } catch (OAuthExpectationFailedException e) {
+                e.printStackTrace();
+            } catch (OAuthNotAuthorizedException e) {
+                e.printStackTrace();
+            } catch (OAuthMessageSignerException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.putString(TOKEN, mConsumer.getToken());
+            editor.putString(SECRET, mConsumer.getTokenSecret());
+            editor.commit();
             getTokenFromPrefs();
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
         }
     }
+
     public boolean getTokenFromPrefs() {
 
         mToken = mPrefs.getString(TOKEN, "");
@@ -156,18 +217,24 @@ public class DataGatherUtils {
     public void generateApiService() {
         mRestAdapter = new RestAdapter.Builder()
                 .setEndpoint(BASE_URL)
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override
-                    public void intercept(RequestFacade request) {
-                        if (mHasAccessToken) {
-                            request.addHeader("Authorization", mToken);
-                        }
-                    }
-                })
+                .setClient(new OkClient(new OkHttpClient()))
                 .build();
         mService = mRestAdapter.create(YahooApi.class);
+        testApi();
     }
 
+    public void testApi() {
+        mService.getUserData(new Callback<JsonElement>() {
+            @Override
+            public void success(JsonElement jsonElement, Response response) {
+                Log.i(TAG, "THINGS WORKED!");
+            }
 
+            @Override
+            public void failure(RetrofitError error) {
+                Log.i(TAG, "THINGS DIDNT WORK");
+            }
+        });
+    }
 
 }

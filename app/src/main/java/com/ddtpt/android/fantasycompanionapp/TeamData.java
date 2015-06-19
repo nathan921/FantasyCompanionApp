@@ -12,6 +12,10 @@ public class TeamData {
 
     ArrayList<PlayerData> mTeam;
 
+    public TeamData() {
+        mTeam = new ArrayList<>();
+    }
+
     public ArrayList<PlayerData> getTeamPlayers() {
         return mTeam;
     }

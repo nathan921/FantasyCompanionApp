@@ -12,6 +12,10 @@ public class LeagueData {
 
     ArrayList<TeamData> mTeams;
 
+    public LeagueData() {
+        mTeams = new ArrayList<>();
+    }
+
     public TeamData getTeamByTeamId(int teamId) {
         for (TeamData t : mTeams) {
             if (t.getTeamId() == teamId) {

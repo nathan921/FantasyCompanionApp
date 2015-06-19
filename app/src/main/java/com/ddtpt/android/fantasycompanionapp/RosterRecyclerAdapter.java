@@ -31,7 +31,7 @@ public class RosterRecyclerAdapter extends RecyclerView.Adapter<RosterRecyclerAd
     public void onBindViewHolder(RosterViewHolder holder, int position) {
         PlayerData curPlayer = playerList.get(position);
         holder.vPlayerName.setText(curPlayer.getPlayerName());
-        holder.vPlayerNumber.setText(curPlayer.getPlayerNumber());
+        holder.vPlayerNumber.setText(String.valueOf(curPlayer.getPlayerNumber()));
         holder.vPlayerGameData.setText(curPlayer.getPlayerGameDetails());
         holder.vPlayerFantasyPoints.setText(Double.toString(curPlayer.getPlayerFantasyPoints()));
     }
