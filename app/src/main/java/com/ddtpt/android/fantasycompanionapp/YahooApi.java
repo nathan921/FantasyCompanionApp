@@ -19,9 +19,17 @@ import retrofit.http.Path;
  * w.c. = waiver claim id follows
  * pt = pending trade id follows
  *
+ * Matt Stafford Player ID = 9265
+ * Julio Jones Player ID = 24793
  *
  * USER DATA: http://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1
  * ROSTER: http://fantasysports.yahooapis.com/fantasy/v2/team/223.l.431.t.9/roster/;week=current
+ * SETTINGS: http://fantasysports.yahooapis.com/fantasy/v2/league/348.l.106320/settings
+ *  -Includes league data, roster position counts, and stat worth
+ * STANDINGS: http://fantasysports.yahooapis.com/fantasy/v2/league/348.l.106320/standings
+ *  -Includes Team data, rank, wins/loses
+ * SCOREBOARD: http://fantasysports.yahooapis.com/fantasy/v2/league/348.l.106320/scoreboard
+ *  -Includes matchups, winner, team points and team projections
  *
  */
 public interface YahooApi {

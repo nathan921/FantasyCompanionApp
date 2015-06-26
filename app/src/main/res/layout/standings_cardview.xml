@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playerCardView"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardBackgroundColor="@color/grey_900"
+    android:layout_width="match_parent"
+    android:layout_height="?android:listPreferredItemHeight"
+    android:focusableInTouchMode="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quarterback"
+            android:id="@+id/positionTxt"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/deep_orange_600"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aaron Rodgers"
+            android:id="@+id/leftPlayerNameTxt"
+            android:layout_below="@+id/positionTxt"
+            android:elevation="4dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/deep_orange_300"/>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:text=""
+            android:id="@+id/divider"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/grey_500"
+            android:layout_below="@+id/positionTxt"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="23.22"
+            android:id="@+id/leftPlayerScoreTxt"
+            android:layout_alignTop="@+id/leftPlayerNameTxt"
+            android:layout_toLeftOf="@+id/divider"
+            android:layout_toStartOf="@+id/divider"
+            android:textColor="@color/deep_orange_600"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="17.99"
+            android:id="@+id/rightPlayerScoreTxt"
+            android:layout_alignTop="@+id/leftPlayerNameTxt"
+            android:layout_toRightOf="@+id/divider"
+            android:layout_toEndOf="@+id/divider"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/deep_orange_600"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ben Rothlisburger"
+            android:id="@+id/rightPlayerNameTxt"
+            android:layout_alignTop="@+id/rightPlayerScoreTxt"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/deep_orange_600"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="21.33"
+            android:id="@+id/leftPlayerPredTxt"
+            android:layout_below="@+id/leftPlayerScoreTxt"
+            android:layout_toLeftOf="@+id/divider"
+            android:layout_toStartOf="@+id/divider"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/deep_orange_600"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="18.94"
+            android:id="@+id/rightPlayerPredTxt"
+            android:layout_below="@+id/rightPlayerScoreTxt"
+            android:layout_toRightOf="@+id/divider"
+            android:layout_toEndOf="@+id/divider"
+            android:textStyle="italic"
+            android:textColor="@color/deep_orange_600"
+            android:layout_marginLeft="8dp"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
