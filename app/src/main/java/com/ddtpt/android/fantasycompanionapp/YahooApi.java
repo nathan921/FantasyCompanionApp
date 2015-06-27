@@ -35,7 +35,7 @@ import retrofit.http.Path;
 public interface YahooApi {
 
     //TODO: need to store the values that come back from here for future calls
-    @GET("/users;use_login=1")
+    @GET("/fantasy/v2/users;use_login=1?format=json")
     void getUserData(Callback<JsonElement> callback);
 
     @GET("/team/{id_string}/roster;week=current")

@@ -6,8 +6,9 @@ import java.util.ArrayList;
  * Created by e228596 on 6/17/2015.
  */
 public class TeamData {
-    String mTeamName, mTeamOwner, mTeamKey;
+    String mTeamName, mTeamOwner, mTeamKey, mRecord;
     int mWaiverPriority, mNumberOfMoves, mNumberOfTrades, mTeamId;
+    double mTotalPoints;
     boolean mHasClinchedPlayoffs;
 
     ArrayList<PlayerData> mTeam;
@@ -86,5 +87,29 @@ public class TeamData {
 
     public void setHasClinchedPlayoffs(boolean hasClinchedPlayoffs) {
         mHasClinchedPlayoffs = hasClinchedPlayoffs;
+    }
+
+    public String getRecord() {
+        return mRecord;
+    }
+
+    public void setRecord(String record) {
+        mRecord = record;
+    }
+
+    public double getTotalPoints() {
+        return mTotalPoints;
+    }
+
+    public void setTotalPoints(double totalPoints) {
+        mTotalPoints = totalPoints;
+    }
+
+    public ArrayList<PlayerData> getTeam() {
+        return mTeam;
+    }
+
+    public void setTeam(ArrayList<PlayerData> team) {
+        mTeam = team;
     }
 }

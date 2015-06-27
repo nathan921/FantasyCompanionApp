@@ -9,25 +9,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonElement;
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
-import java.net.MulticastSocket;
-
-import oauth.signpost.OAuth;
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 import retrofit.Callback;
-import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.OkClient;
@@ -35,19 +24,36 @@ import retrofit.client.Response;
 
 /**
  * Created by e228596 on 6/17/2015.
+ * Authorization: OAuth realm="example",
+     oauth_consumer_key="9djdj82h48djs9d2",
+     oauth_token="kkk9d7dh3k39sjv7",
+     oauth_signature_method="HMAC-SHA1",
+     oauth_timestamp="137131201",
+     oauth_nonce="7d8f3e4a",
+     oauth_signature="bYT5CMsGcbgUdFHObYMEfcx6bsw%3D"
  */
 public class DataGatherUtils {
     private static final String TAG = "DataGatherUtils";
 
     private static final String SECRET = "oauth_secret";
     private static final String TOKEN = "oauth_token";
-    private static final String SESSION = "oauth_session_handle";
-    private static final String VERIFIER = "verifier";
 
-    private static final String BASE_URL = "http://fantasysports.yahooapis.com/fantasy/v2";
+    private static final String OAUTH_SIGNATURE_METHOD = "oauth_signature_method";
+    private static final String SIGNATURE_METHOD = "HMAC-SHA1";
+    private static final String REALM = "realm";
+
+    private static final String OAUTH_TIMESTAMP = "oauth_timestamp";
+    private static final String OAUTH_NONCE = "oauth_nonce";
+    private static final String OAUTH_SIGNATURE = "oauth_signature";
+    private static final String OAUTH_VERSION = "oauth_version";
+
+    private static final String SESSION = "oauth_session_handle";
+    private static final String VERIFIER = "oauth_verifier";
+
+    private static final String BASE_URL = "http://fantasysports.yahooapis.com";
     private static final String GET_TOKEN = "https://api.login.yahoo.com/oauth/v2/get_token";
 
-
+    private static final String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
     private static final String CONSUMER_KEY = "dj0yJmk9RjVUYUZNc1piMzVRJmQ9WVdrOVNGUnJkMFZFTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD02YQ--";
     private static final String CONSUMER_SECRET = "7c5d77c23d2c2a4c2c117bc846e392c5fa7a4697";
 
@@ -90,12 +96,14 @@ public class DataGatherUtils {
     private Context mContext;
     private Boolean mHasAccessToken;
     private CommonsHttpOAuthProvider mProvider;
-    private CommonsHttpOAuthConsumer mConsumer;
+    private RetrofitHttpOAuthConsumer mConsumer;
     private SharedPreferences mPrefs;
     private Bus mBus;
-    private YahooApi mService;
+    private com.ddtpt.android.fantasycompanionapp.YahooApi mService;
+    private JsonDataService mJsonDataService;
     private RestAdapter mRestAdapter;
     String mToken, mSecret, mOAuthVerifier;
+
 
     public DataGatherUtils(Context c) {
         mContext = c;
@@ -103,17 +111,17 @@ public class DataGatherUtils {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mBus = BusProvider.getInstance();
         mBus.register(this);
-        
+
         mToken = mPrefs.getString(TOKEN, "");
         mSecret = mPrefs.getString(SECRET, "");
         mOAuthVerifier = "";
         String sessionString = mPrefs.getString(SESSION, "");
 
-        mConsumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+        mConsumer = new RetrofitHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 
         mProvider = new CommonsHttpOAuthProvider(
                 "https://api.login.yahoo.com/oauth/v2/get_request_token",
-                "https://api.login.yahoo.com/oauth/v2/get_access_token",
+                "https://api.login.yahoo.com/oauth/v2/get_token",
                 "https://api.login.yahoo.com/oauth/v2/request_auth"
         );
 
@@ -125,22 +133,24 @@ public class DataGatherUtils {
     }
 
     public void getAccessToken() {
+//        new ScribeRequestOAuthTokenTask().execute();
         //call Async task for OAuthRequestTokenTask.execute();
         new OAuthRequestTokenTask(mContext, mConsumer, mProvider).execute();
     }
 
     public void parseAccessToken(Uri uri) {
-        mOAuthVerifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
+//        new ScribeGetAccessTokenTask().execute(uri);
+        mOAuthVerifier = uri.getQueryParameter("oauth_verifier");
         new OAuthGetAccessTokenTask().execute();
-        //call the OAuthGetAccessTokenTask with the verifier
+
     }
 
     class OAuthRequestTokenTask extends AsyncTask<Void, Void, String> {
         private Context context;
         private CommonsHttpOAuthProvider provider;
-        private CommonsHttpOAuthConsumer consumer;
+        private RetrofitHttpOAuthConsumer consumer;
 
-        public OAuthRequestTokenTask(Context c, CommonsHttpOAuthConsumer con, CommonsHttpOAuthProvider prov) {
+        public OAuthRequestTokenTask(Context c, RetrofitHttpOAuthConsumer con, CommonsHttpOAuthProvider prov) {
             context = c;
             consumer = con;
             provider = prov;
@@ -193,48 +203,75 @@ public class DataGatherUtils {
             SharedPreferences.Editor editor = mPrefs.edit();
             editor.putString(TOKEN, mConsumer.getToken());
             editor.putString(SECRET, mConsumer.getTokenSecret());
+            editor.putString(OAUTH_NONCE, mConsumer.getRequestParameters().getFirst(OAUTH_NONCE));
+            editor.putString(OAUTH_SIGNATURE_METHOD, mConsumer.getRequestParameters().getFirst(OAUTH_SIGNATURE_METHOD));
+            editor.putString(OAUTH_TIMESTAMP, mConsumer.getRequestParameters().getFirst(OAUTH_TIMESTAMP));
+
             editor.commit();
             getTokenFromPrefs();
         }
     }
 
     public boolean getTokenFromPrefs() {
-
         mToken = mPrefs.getString(TOKEN, "");
         mSecret = mPrefs.getString(SECRET, "");
 
+        String realm = "yahooapis.com";
+        final String nonce = mPrefs.getString(OAUTH_NONCE, "");
+        final String sig_method = mPrefs.getString(OAUTH_SIGNATURE_METHOD, "");
+        final String timestamp = mPrefs.getString(OAUTH_TIMESTAMP, "");
+        final String version = "1.0";
+
+        //new TestScribeSignature().execute();
+
         Log.i(TAG, "Yahoo OAuth Token: " + mToken);
         Log.i(TAG, "Yahoo OAuth Secret: " + mSecret);
+        Log.i(TAG, "NONCE: " + nonce);
+        Log.i(TAG, "SIGNATURE METHOD: " + sig_method);
+        Log.i(TAG, "TIMESTAMP: " + timestamp);
+        Log.i(TAG, "VERSION: " + version);
+        Log.i(TAG, "SIGNATURE: " + mSecret);
 
-        if (!mToken.equals("") && !mSecret.equals("")) {
+        if (!mToken.equals("") && !mSecret.equals("") && !nonce.equals("") && !sig_method.equals("")
+                && !timestamp.equals("") && !version.equals("") && !mSecret.equals("")) {
             mConsumer.setTokenWithSecret(mToken, mSecret);
+            OkClient client = new SigningOkClient(mConsumer);
+
             mHasAccessToken = true;
-            generateApiService();
+
+            mRestAdapter = new RestAdapter.Builder()
+                    .setEndpoint(BASE_URL)
+                    .setClient(client)
+                    .build();
+
+            mService = mRestAdapter.create(YahooApi.class);
+
+            testApi();
+
             return true;
         } else return false;
     }
 
-    public void generateApiService() {
-        mRestAdapter = new RestAdapter.Builder()
-                .setEndpoint(BASE_URL)
-                .setClient(new OkClient(new OkHttpClient()))
-                .build();
-        mService = mRestAdapter.create(YahooApi.class);
-        testApi();
-    }
-
-    public void testApi() {
+       public void testApi() {
         mService.getUserData(new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
                 Log.i(TAG, "THINGS WORKED!");
+
             }
 
             @Override
             public void failure(RetrofitError error) {
                 Log.i(TAG, "THINGS DIDNT WORK");
+                //analyzeFailure(error);
             }
         });
+    }
+
+    private void analyzeFailure(RetrofitError error) {
+        if (error.getResponse().getHeaders().get(2).getValue().contains("token_expired")) {
+            new OAuthGetAccessTokenTask().execute();
+        }
     }
 
 }
