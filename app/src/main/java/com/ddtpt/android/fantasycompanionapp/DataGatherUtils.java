@@ -8,8 +8,13 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.squareup.otto.Bus;
+
+import org.json.JSONObject;
 
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -102,6 +107,8 @@ public class DataGatherUtils {
     private com.ddtpt.android.fantasycompanionapp.YahooApi mService;
     private JsonDataService mJsonDataService;
     private RestAdapter mRestAdapter;
+    private Gson mGson;
+
     String mToken, mSecret, mOAuthVerifier;
 
 
@@ -246,16 +253,18 @@ public class DataGatherUtils {
 
             mService = mRestAdapter.create(YahooApi.class);
 
-            testApi();
-
             return true;
         } else return false;
     }
 
        public void testApi() {
-        mService.getUserData(new Callback<JsonElement>() {
+        mService.getLeagueInfo(new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
+
+                Gson gson = new GsonBuilder().create();
+                JsonObject json = jsonElement.getAsJsonObject();
+                JsonFactory.base content = gson.fromJson(json, JsonFactory.base.class);
                 Log.i(TAG, "THINGS WORKED!");
 
             }

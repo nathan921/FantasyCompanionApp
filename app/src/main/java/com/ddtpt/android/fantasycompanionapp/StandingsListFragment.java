@@ -17,12 +17,14 @@ public class StandingsListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private static final String TAG = "StandingsListFragment";
     private ArrayList<TeamData> mOwnerData;
+    private DataGatherUtils mDataGatherUtils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mOwnerData = new ArrayList<>();
+        mDataGatherUtils = new DataGatherUtils(getActivity());
 
         TeamData temp = new TeamData();
         temp.setRecord("12-3-0");
@@ -46,6 +48,8 @@ public class StandingsListFragment extends Fragment {
         mOwnerData.add(temp2);
         mOwnerData.add(temp3);
 
+        fetchStandingsData();
+
     }
 
     @Override
@@ -66,6 +70,10 @@ public class StandingsListFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
 
         return v;
+    }
+
+    public void fetchStandingsData() {
+
     }
 }
 

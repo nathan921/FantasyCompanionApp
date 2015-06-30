@@ -1,6 +1,7 @@
 package com.ddtpt.android.fantasycompanionapp;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import retrofit.Callback;
 import retrofit.http.GET;
@@ -41,4 +42,9 @@ public interface YahooApi {
     @GET("/team/{id_string}/roster;week=current")
     void getCurrentWeeksRoster(@Path("id_string") String id, Callback<JsonElement> callback);
 
+    @GET("/fantasy/v2/league/331.l.106320/standings")
+    void getStandings(Callback<JsonElement> callback);
+
+    @GET("/fantasy/v2/league/331.l.106320?format=json")
+    void getLeagueInfo(Callback<JsonElement> callback);
 }

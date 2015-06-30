@@ -20,7 +20,7 @@ public class RosterListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeam = DataStore.get(getActivity()).getLeague().getTeamByTeamId(1);
+        //mTeam = DataStore.get(getActivity()).getLeague().getTeamByTeamId(1);
         if (mTeam == null) {
             mTeam = new TeamData();
             mTeam.addPlayerToTeam(new PlayerData("Detlef Nguyen", "QB", "DEN @ JEW 11AM", 12, 15.35));

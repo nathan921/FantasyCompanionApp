@@ -1,5 +1,7 @@
 package com.ddtpt.android.fantasycompanionapp;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,80 @@ import java.util.Map;
  * Created by e228596 on 6/26/2015.
  */
 public class JsonFactory {
+
+    public class base {
+        @SerializedName("fantasy_content")
+        private fantasy_content fantasyContent;
+
+        public fantasy_content getFantasyContent() {
+            return fantasyContent;
+        }
+
+        public void setFantasyContent(fantasy_content fantasyContent) {
+            this.fantasyContent = fantasyContent;
+        }
+    }
+
+    public class fantasy_content {
+
+        private League[] league;
+        private String time;
+        private String copyright;
+
+        @SerializedName("refresh_rate")
+        private String refreshRate;
+
+        @SerializedName("xml:lang")
+        private String xmlName;
+
+        @SerializedName("yahoo:uri")
+        private String yahooUri;
+
+        public String getCopyright() {
+            return copyright;
+        }
+
+        public void setCopyright(String copyright) {
+            this.copyright = copyright;
+        }
+
+        public String getRefreshRate() {
+            return refreshRate;
+        }
+
+        public void setRefreshRate(String refreshRate) {
+            this.refreshRate = refreshRate;
+        }
+
+        public String getXmlName() {
+            return xmlName;
+        }
+
+        public void setXmlName(String xmlName) {
+            this.xmlName = xmlName;
+        }
+
+        public String getYahooUri() {
+            return yahooUri;
+        }
+
+        public void setYahooUri(String yahooUri) {
+            this.yahooUri = yahooUri;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public League getLeague(int index) {
+            return league[index];
+        }
+    }
+
 
     public class Bye_weeks {
         private String week;
@@ -1694,6 +1770,26 @@ public class JsonFactory {
         private String url;
 
         private String waiver_priority;
+
+        private Roster roster;
+
+        private int rank;
+
+        public Roster getRoster() {
+            return roster;
+        }
+
+        public void setRoster(Roster roster) {
+            this.roster = roster;
+        }
+
+        public int getRank() {
+            return rank;
+        }
+
+        public void setRank(int rank) {
+            this.rank = rank;
+        }
 
         public String getClinched_playoffs ()
         {

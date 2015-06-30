@@ -82,9 +82,9 @@ public abstract class MainActivity extends AppCompatActivity {
     }
 
     private void checkAccessToken() {
-        //if (!mDataGatherUtils.getTokenFromPrefs()) {
+        if (!mDataGatherUtils.getTokenFromPrefs()) {
             mDataGatherUtils.getAccessToken();
-        //}
+        }
     }
 
     private void setupNavigationView() {
@@ -123,5 +123,11 @@ public abstract class MainActivity extends AppCompatActivity {
             mDataGatherUtils.parseAccessToken(uri);
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mDataGatherUtils.testApi();
     }
 }

@@ -6,30 +6,32 @@ import java.util.ArrayList;
  * Created by e228596 on 6/17/2015.
  */
 public class LeagueData {
+
+    JsonFactory.League mLeagueData;
+    ArrayList<JsonFactory.Team> mTeams;
+
     String mLeagueKey, mLeagueId, mLeagueName, mLeagueChatId;
     int mNumberOfTeams, mCurrentWeek, mStartWeek, mEndWeek;
     int mCurrentUserTeamId;
-
-    ArrayList<TeamData> mTeams;
 
     public LeagueData() {
         mTeams = new ArrayList<>();
     }
 
-    public TeamData getTeamByTeamId(int teamId) {
-        for (TeamData t : mTeams) {
-            if (t.getTeamId() == teamId) {
+    public JsonFactory.Team getTeamByTeamId(int teamId) {
+        for (JsonFactory.Team t : mTeams) {
+            if (t.getTeam_id().equals(teamId)) {
                 return t;
             }
         }
         return null;
     }
 
-    public ArrayList<TeamData> getTeams() {
+    public ArrayList<JsonFactory.Team> getTeams() {
         return mTeams;
     }
 
-    public void setTeams(ArrayList<TeamData> teams) {
+    public void setTeams(ArrayList<JsonFactory.Team> teams) {
         mTeams = teams;
     }
 
