@@ -27,7 +27,7 @@ public class JsonFactory {
 
     public class fantasy_content {
 
-        private League[] league;
+        private List<League> league = new ArrayList<>();
         private String time;
         private String copyright;
 
@@ -80,11 +80,14 @@ public class JsonFactory {
             this.time = time;
         }
 
-        public League getLeague(int index) {
-            return league[index];
+        public List<League> getLeague() {
+            return league;
+        }
+
+        public void setLeague(List<League> league) {
+            this.league = league;
         }
     }
-
 
     public class Bye_weeks {
         private String week;
@@ -160,6 +163,8 @@ public class JsonFactory {
 
     public class League {
 
+        private List<Setting> settings = new ArrayList<>();
+
         private String league_type;
 
         private String end_week;
@@ -205,6 +210,14 @@ public class JsonFactory {
         private String start_date;
 
         private String is_finished;
+
+        public List<Setting> getSettings() {
+            return settings;
+        }
+
+        public void setSettings(List<Setting> settings) {
+            this.settings = settings;
+        }
 
         public String getLeague_type ()
         {
@@ -1218,6 +1231,18 @@ public class JsonFactory {
     }
 
     public class Roster_position {
+        private Roster_position_ roster_position;
+
+        public Roster_position_ getRosterPosition() {
+            return roster_position;
+        }
+
+        public void setRosterPosition(Roster_position_ roster_position) {
+            this.roster_position = roster_position;
+        }
+    }
+
+    public class Roster_position_ {
 
         private String position;
         private String position_type;
@@ -1250,7 +1275,7 @@ public class JsonFactory {
 
     public class Roster_positions {
 
-        private List<Roster_position> roster_position = new ArrayList<Roster_position>();
+        private List<Roster_position> roster_position = new ArrayList<>();
 
         public List<Roster_position> getRoster_position() {
             return roster_position;
@@ -1327,7 +1352,7 @@ public class JsonFactory {
         }
     }
 
-    public class Settings {
+    public class Setting {
 
         private String draft_type;
         private String is_auction_draft;
@@ -1352,10 +1377,10 @@ public class JsonFactory {
         private String trade_reject_time;
         private String player_pool;
         private String cant_cut_list;
-        private Roster_positions roster_positions;
+        private List<Roster_position> roster_positions = new ArrayList<>();
         private Stat_categories stat_categories;
         //TODO: Figure out what this does
-        //private Stat_modifiers stat_modifiers;
+        private Stat_modifiers stat_modifiers;
         private String pickem_enabled;
         private String uses_fractional_points;
         private String uses_negative_points;
@@ -1543,6 +1568,96 @@ public class JsonFactory {
     }
 
     public class Stat {
+        private Stat_ stat;
+
+        public Stat_ getStat() {
+            return stat;
+        }
+
+        public void setStat(Stat_ stat) {
+            this.stat = stat;
+        }
+    }
+
+    public class Stat_ {
+        private Integer stat_id;
+        private String enabled;
+        private String name;
+        private String display_name;
+        private String sort_order;
+        private String position_type;
+        private List<Stat_position_type> stat_position_types = new ArrayList<>();
+
+        public Integer getStat_id() {
+            return stat_id;
+        }
+
+        public void setStat_id(Integer stat_id) {
+            this.stat_id = stat_id;
+        }
+
+        public String getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(String enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDisplay_name() {
+            return display_name;
+        }
+
+        public void setDisplay_name(String display_name) {
+            this.display_name = display_name;
+        }
+
+        public String getSort_order() {
+            return sort_order;
+        }
+
+        public void setSort_order(String sort_order) {
+            this.sort_order = sort_order;
+        }
+
+        public String getPosition_type() {
+            return position_type;
+        }
+
+        public void setPosition_type(String position_type) {
+            this.position_type = position_type;
+        }
+
+        public List<Stat_position_type> getStat_position_types() {
+            return stat_position_types;
+        }
+
+        public void setStat_position_types(List<Stat_position_type> stat_position_types) {
+            this.stat_position_types = stat_position_types;
+        }
+    }
+
+    public class Stat__ {
+        private Stat___ stat;
+
+        public Stat___ getStat() {
+            return stat;
+        }
+
+        public void setStat(Stat___ stat) {
+            this.stat = stat;
+        }
+    }
+
+    public class Stat___ {
 
         private String stat_id;
         private String value;
@@ -1566,26 +1681,38 @@ public class JsonFactory {
 
     public class Stats {
 
-        private List<Stat> stat = new ArrayList<Stat>();
+        private List<Stat_type> stat = new ArrayList<Stat_type>();
 
-        public List<Stat> getStat() {
+        public List<Stat_type> getStat() {
             return stat;
         }
 
-        public void setStat(List<Stat> stat) {
+        public void setStat(List<Stat_type> stat) {
             this.stat = stat;
         }
     }
 
     public class Stat_categories {
 
-        private Stats stats;
+        private List<Stat> stats = new ArrayList<>();
 
-        public Stats getStats() {
+        public List<Stat> getStats() {
             return stats;
         }
 
-        public void setStats(Stats stats) {
+        public void setStats(List<Stat> stats) {
+            this.stats = stats;
+        }
+    }
+
+    public class Stat_modifiers {
+        private List<Stat__> stats = new ArrayList<>();
+
+        public List<Stat__> getStats() {
+            return stats;
+        }
+
+        public void setStats(List<Stat__> stats) {
             this.stats = stats;
         }
     }
@@ -1689,6 +1816,18 @@ public class JsonFactory {
 
     public class Stat_position_type {
 
+        private Stat_position_type_ stat_position_type;
+
+        public Stat_position_type_ getPosition_type() {
+            return stat_position_type;
+        }
+
+        public void setPosition_type(Stat_position_type_ stat_position_type_) {
+            this.stat_position_type = stat_position_type_;
+        }
+    }
+
+    public class Stat_position_type_ {
         private String position_type;
 
         public String getPosition_type() {

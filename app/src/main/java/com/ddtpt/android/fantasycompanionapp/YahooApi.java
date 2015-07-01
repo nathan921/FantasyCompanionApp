@@ -45,6 +45,7 @@ public interface YahooApi {
     @GET("/fantasy/v2/league/331.l.106320/standings")
     void getStandings(Callback<JsonElement> callback);
 
-    @GET("/fantasy/v2/league/331.l.106320?format=json")
-    void getLeagueInfo(Callback<JsonElement> callback);
+    //Gets League Info and Scoring Values
+    @GET("/fantasy/v2/league/331.l.106320/settings?format=json")
+    void getLeagueSettings(Callback<JsonElement> callback);
 }

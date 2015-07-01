@@ -10,10 +10,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.squareup.otto.Bus;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
@@ -257,14 +259,15 @@ public class DataGatherUtils {
         } else return false;
     }
 
-       public void testApi() {
-        mService.getLeagueInfo(new Callback<JsonElement>() {
+    public void testApi() {
+        mService.getLeagueSettings(new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
 
                 Gson gson = new GsonBuilder().create();
-                JsonObject json = jsonElement.getAsJsonObject();
-                JsonFactory.base content = gson.fromJson(json, JsonFactory.base.class);
+                JsonObject json = jsonElement.getAsJsonObject().get("fantasy_content").getAsJsonObject();
+                JsonFactory.fantasy_content content = gson.fromJson(json, JsonFactory.fantasy_content.class);
+
                 Log.i(TAG, "THINGS WORKED!");
 
             }
