@@ -48,4 +48,7 @@ public interface YahooApi {
     //Gets League Info and Scoring Values
     @GET("/fantasy/v2/league/331.l.106320/settings?format=json")
     void getLeagueSettings(Callback<JsonElement> callback);
+
+    @GET("/fantasy/v2/team/331.l.106320.t.1/roster/players;week=15;out=players?format=json")
+    void getTeamRoster(Callback<JsonElement> callback);
 }

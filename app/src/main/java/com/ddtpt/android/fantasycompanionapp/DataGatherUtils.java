@@ -260,7 +260,7 @@ public class DataGatherUtils {
     }
 
     public void testApi() {
-        mService.getLeagueSettings(new Callback<JsonElement>() {
+        mService.getTeamRoster(new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
 
