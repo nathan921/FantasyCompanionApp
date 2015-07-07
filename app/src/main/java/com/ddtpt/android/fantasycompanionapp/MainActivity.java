@@ -128,6 +128,6 @@ public abstract class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mDataGatherUtils.testApi();
+        //mDataGatherUtils.testApi();
     }
 }

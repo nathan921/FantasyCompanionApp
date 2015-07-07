@@ -1,7 +1,14 @@
 package com.ddtpt.android.fantasycompanionapp;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -458,6 +465,15 @@ public class JsonFactory {
     }
 
     public class Manager_ {
+        public Manager_(String id, String name, String gid, String isComm, String isLogin, String mail, String image) {
+            manager_id = id;
+            guid = gid;
+            email = mail;
+            nickname = name;
+            is_commissioner = isComm;
+            is_current_login = isLogin;
+        }
+
         private String guid;
 
         private String image_url;
@@ -1884,11 +1900,14 @@ public class JsonFactory {
     }
 
     public class Team {
+
+        public Team() {}
+
         private String clinched_playoffs;
 
         private String number_of_moves;
 
-        //private Manager_ managers;
+        private Manager_ managers;
 
         private String league_scoring_type;
 
@@ -1900,7 +1919,7 @@ public class JsonFactory {
 
         private String number_of_trades;
 
-        //private Team_logo_ team_logos;
+        private Team_logo_ team_logos;
 
         //private Roster_adds roster_adds;
 
@@ -1950,15 +1969,15 @@ public class JsonFactory {
             this.number_of_moves = number_of_moves;
         }
 
-//        public Manager_ getManagers ()
-//        {
-//            return managers;
-//        }
+        public Manager_ getManagers ()
+        {
+            return managers;
+        }
 
-//        public void setManagers (Manager_ managers)
-//        {
-//            this.managers = managers;
-//        }
+        public void setManagers (Manager_ managers)
+        {
+            this.managers = managers;
+        }
 
         public String getLeague_scoring_type ()
         {
@@ -2010,15 +2029,15 @@ public class JsonFactory {
             this.number_of_trades = number_of_trades;
         }
 
-//        public Team_logo_ getTeam_logos ()
-//        {
-//            return team_logos;
-//        }
-//
-//        public void setTeam_logos (Team_logo_ team_logos)
-//        {
-//            this.team_logos = team_logos;
-//        }
+        public Team_logo_ getTeam_logos ()
+        {
+            return team_logos;
+        }
+
+        public void setTeam_logos (Team_logo_ team_logos)
+        {
+            this.team_logos = team_logos;
+        }
 //
 //        public Roster_adds getRoster_adds ()
 //        {
@@ -2090,6 +2109,11 @@ public class JsonFactory {
     }
 
     public class Team_logo_ {
+        public Team_logo_(String u, String s) {
+            url = u;
+            size = s;
+        }
+
         private String url;
 
         private String size;
@@ -2249,6 +2273,46 @@ public class JsonFactory {
 
         public void setPoints_against(String points_against) {
             this.points_against = points_against;
+        }
+    }
+
+    public class TeamDeserializer implements JsonDeserializer<Team> {
+
+        @Override
+        public Team deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonArray arrayOfObjects = json.getAsJsonArray(); //getAsJsonObject().get("fantasy_content").getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray();
+            //json.get("0").getAsJsonObject().get("matchups").getAsJsonObject().get("0").getAsJsonObject()
+            // .get("matchup").getAsJsonObject().get("0").getAsJsonObject().get("teams").getAsJsonObject()
+            // .get("0").getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray()
+            // .get(0).getAsJsonObject().has("team_ass")
+            Team team = new Team();
+            for (JsonElement element : arrayOfObjects) {
+                if (element.isJsonObject()) {
+                    JsonObject obj = element.getAsJsonObject();
+                    if (obj.has("team_key")) {
+                        team.setTeam_key(obj.get("team_key").getAsString());
+                    } else if (obj.has("team_id")) {
+                        team.setTeam_id(obj.get("team_id").getAsString());
+                    } else if (obj.has("name")) {
+                        team.setName(obj.get("name").getAsString());
+                    } else if (obj.has("is_owned_by_current_login")) {
+                        team.setIs_owned_by_current_login(obj.get("is_owned_by_current_login").getAsString());
+                    } else if (obj.has("url")) {
+                        team.setUrl(obj.get("url").getAsString());
+                    } else if (obj.has("waiver_priority")) {
+                        team.setWaiver_priority(obj.get("waiver_priority").getAsString());
+                    } else if (obj.has("number_of_moves")) {
+                        team.setNumber_of_moves(obj.get("number_of_moves").getAsString());
+                    } else if (obj.has("number_of_trades")) {
+                        team.setNumber_of_trades(obj.get("number_of_trades").getAsString());
+                    } else if (obj.has("clinched_playoffs")) {
+                        team.setClinched_playoffs(obj.get("clinched_playoffs").getAsString());
+                    } else if (obj.has("league_scoring_type")) {
+                        team.setLeague_scoring_type(obj.get("league_scoring_type").getAsString());
+                    }
+                }
+            }
+            return team;
         }
     }
 }
