@@ -457,7 +457,7 @@ public class JsonFactory {
 
     }
 
-    public class Manager {
+    public class Manager_ {
         private String guid;
 
         private String image_url;
@@ -549,23 +549,23 @@ public class JsonFactory {
         }
     }
 
-    public class Managers {
-        private Manager manager;
+    public class Manager {
+        private Manager_ mgr;
 
-        public Manager getManager ()
+        public Manager_ getManager ()
         {
-            return manager;
+            return mgr;
         }
 
-        public void setManager (Manager manager)
+        public void setManager (Manager_ manager)
         {
-            this.manager = manager;
+            mgr = manager;
         }
 
         @Override
         public String toString()
         {
-            return "ClassPojo [manager = "+manager+"]";
+            return "ClassPojo [manager = "+mgr+"]";
         }
     }
 
@@ -1888,7 +1888,7 @@ public class JsonFactory {
 
         private String number_of_moves;
 
-        private Managers managers;
+        //private Manager_ managers;
 
         private String league_scoring_type;
 
@@ -1900,9 +1900,9 @@ public class JsonFactory {
 
         private String number_of_trades;
 
-        private Team_logos team_logos;
+        //private Team_logo_ team_logos;
 
-        private Roster_adds roster_adds;
+        //private Roster_adds roster_adds;
 
         private String team_id;
 
@@ -1910,17 +1910,17 @@ public class JsonFactory {
 
         private String waiver_priority;
 
-        private Roster roster;
+        //private Roster roster;
 
         private int rank;
 
-        public Roster getRoster() {
-            return roster;
-        }
-
-        public void setRoster(Roster roster) {
-            this.roster = roster;
-        }
+//        public Roster getRoster() {
+//            return roster;
+//        }
+//
+//        public void setRoster(Roster roster) {
+//            this.roster = roster;
+//        }
 
         public int getRank() {
             return rank;
@@ -1950,15 +1950,15 @@ public class JsonFactory {
             this.number_of_moves = number_of_moves;
         }
 
-        public Managers getManagers ()
-        {
-            return managers;
-        }
+//        public Manager_ getManagers ()
+//        {
+//            return managers;
+//        }
 
-        public void setManagers (Managers managers)
-        {
-            this.managers = managers;
-        }
+//        public void setManagers (Manager_ managers)
+//        {
+//            this.managers = managers;
+//        }
 
         public String getLeague_scoring_type ()
         {
@@ -2010,25 +2010,25 @@ public class JsonFactory {
             this.number_of_trades = number_of_trades;
         }
 
-        public Team_logos getTeam_logos ()
-        {
-            return team_logos;
-        }
-
-        public void setTeam_logos (Team_logos team_logos)
-        {
-            this.team_logos = team_logos;
-        }
-
-        public Roster_adds getRoster_adds ()
-        {
-            return roster_adds;
-        }
-
-        public void setRoster_adds (Roster_adds roster_adds)
-        {
-            this.roster_adds = roster_adds;
-        }
+//        public Team_logo_ getTeam_logos ()
+//        {
+//            return team_logos;
+//        }
+//
+//        public void setTeam_logos (Team_logo_ team_logos)
+//        {
+//            this.team_logos = team_logos;
+//        }
+//
+//        public Roster_adds getRoster_adds ()
+//        {
+//            return roster_adds;
+//        }
+//
+//        public void setRoster_adds (Roster_adds roster_adds)
+//        {
+//            this.roster_adds = roster_adds;
+//        }
 
         public String getTeam_id ()
         {
@@ -2063,14 +2063,14 @@ public class JsonFactory {
         @Override
         public String toString()
         {
-            return "ClassPojo [clinched_playoffs = "+clinched_playoffs+", number_of_moves = "+number_of_moves+", managers = "+managers+", league_scoring_type = "+league_scoring_type+", is_owned_by_current_login = "+is_owned_by_current_login+", team_key = "+team_key+", name = "+name+", number_of_trades = "+number_of_trades+", team_logos = "+team_logos+", roster_adds = "+roster_adds+", team_id = "+team_id+", url = "+url+", waiver_priority = "+waiver_priority+"]";
+            return ""; //ClassPojo [clinched_playoffs = "+clinched_playoffs+", number_of_moves = "+number_of_moves+", managers = "+managers+", league_scoring_type = "+league_scoring_type+", is_owned_by_current_login = "+is_owned_by_current_login+", team_key = "+team_key+", name = "+name+", number_of_trades = "+number_of_trades+", team_logos = "+team_logos+", roster_adds = "+roster_adds+", team_id = "+team_id+", url = "+url+", waiver_priority = "+waiver_priority+"]";
         }
     }
 
     public class Teams {
 
         private String count;
-        private List<Team> team = new ArrayList<Team>();
+        private List<Team> team = new ArrayList<>();
 
         public String getCount() {
             return count;
@@ -2089,7 +2089,7 @@ public class JsonFactory {
         }
     }
 
-    public class Team_logo {
+    public class Team_logo_ {
         private String url;
 
         private String size;
@@ -2121,17 +2121,17 @@ public class JsonFactory {
         }
     }
 
-    public class Team_logos {
-        private Team_logo team_logo;
+    public class Team_logo {
+        private Team_logo_ team_logo;
 
-        public Team_logo getTeam_logo ()
+        public Team_logo_ getTeam_logo ()
         {
             return team_logo;
         }
 
-        public void setTeam_logo (Team_logo team_logo)
+        public void setTeam_logo (Team_logo_ team_logo_)
         {
-            this.team_logo = team_logo;
+            this.team_logo = team_logo_;
         }
 
         @Override

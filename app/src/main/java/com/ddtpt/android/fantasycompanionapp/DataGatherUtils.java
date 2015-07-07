@@ -13,10 +13,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Bus;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -260,13 +265,15 @@ public class DataGatherUtils {
     }
 
     public void testApi() {
-        mService.getTeamRoster(new Callback<JsonElement>() {
+        mService.getPlayerData(new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
-
+                //jsonElement.get("fantasy_content").getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonObject()
                 Gson gson = new GsonBuilder().create();
-                JsonObject json = jsonElement.getAsJsonObject().get("fantasy_content").getAsJsonObject();
-                JsonFactory.fantasy_content content = gson.fromJson(json, JsonFactory.fantasy_content.class);
+                JsonArray json = jsonElement.getAsJsonObject().get("fantasy_content").getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray();
+                JsonFactory.Team content = gson.fromJson(json, JsonFactory.Team.class);
+                //Type collectionType = new TypeToken<Collection<JsonFactory.Team>>(){}.getType();
+                //Collection<JsonFactory.Team> teams = gson.fromJson(json, collectionType);
 
                 Log.i(TAG, "THINGS WORKED!");
 
