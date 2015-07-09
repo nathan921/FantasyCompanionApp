@@ -596,6 +596,7 @@ public class JsonFactory {
         private String is_tied;
         private String winner_team_key;
         private Teams teams;
+        private String team1, team2;
 
         public String getWeek() {
             return week;
@@ -659,14 +660,6 @@ public class JsonFactory {
 
         public void setWinner_team_key(String winner_team_key) {
             this.winner_team_key = winner_team_key;
-        }
-
-        public Teams getTeams() {
-            return teams;
-        }
-
-        public void setTeams(Teams teams) {
-            this.teams = teams;
         }
     }
 
@@ -1929,7 +1922,7 @@ public class JsonFactory {
 
         private String waiver_priority;
 
-        //private Roster roster;
+        private Roster roster;
 
         private int rank;
 
@@ -1940,6 +1933,14 @@ public class JsonFactory {
 //        public void setRoster(Roster roster) {
 //            this.roster = roster;
 //        }
+
+        public Roster getRoster() {
+            return roster;
+        }
+
+        public void setRoster(Roster roster) {
+            this.roster = roster;
+        }
 
         public int getRank() {
             return rank;

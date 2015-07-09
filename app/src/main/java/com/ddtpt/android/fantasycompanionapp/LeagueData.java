@@ -9,13 +9,15 @@ public class LeagueData {
 
     JsonFactory.League mLeagueData;
     ArrayList<JsonFactory.Team> mTeams;
-
-    String mLeagueKey, mLeagueId, mLeagueName, mLeagueChatId;
-    int mNumberOfTeams, mCurrentWeek, mStartWeek, mEndWeek;
-    int mCurrentUserTeamId;
+    JsonFactory.Scoreboard mScoreboard;
+    int[] mStandings;
+    JsonFactory mJsonFactory;
 
     public LeagueData() {
+        mJsonFactory = new JsonFactory();
+        mLeagueData = mJsonFactory.new League();
         mTeams = new ArrayList<>();
+        mScoreboard = mJsonFactory.new Scoreboard();
     }
 
     public JsonFactory.Team getTeamByTeamId(int teamId) {
@@ -35,75 +37,11 @@ public class LeagueData {
         mTeams = teams;
     }
 
-    public String getLeagueKey() {
-        return mLeagueKey;
+    public void setStandings(int[] stand) {
+        mStandings = stand;
     }
 
-    public int getCurrentUserTeamId() {
-        return mCurrentUserTeamId;
-    }
-
-    public void setCurrentUserTeamId(int currentUserTeamId) {
-        mCurrentUserTeamId = currentUserTeamId;
-    }
-
-    public void setLeagueKey(String leagueKey) {
-        mLeagueKey = leagueKey;
-    }
-
-    public String getLeagueId() {
-        return mLeagueId;
-    }
-
-    public void setLeagueId(String leagueId) {
-        mLeagueId = leagueId;
-    }
-
-    public String getLeagueName() {
-        return mLeagueName;
-    }
-
-    public void setLeagueName(String leagueName) {
-        mLeagueName = leagueName;
-    }
-
-    public String getLeagueChatId() {
-        return mLeagueChatId;
-    }
-
-    public void setLeagueChatId(String leagueChatId) {
-        mLeagueChatId = leagueChatId;
-    }
-
-    public int getNumberOfTeams() {
-        return mNumberOfTeams;
-    }
-
-    public void setNumberOfTeams(int numberOfTeams) {
-        mNumberOfTeams = numberOfTeams;
-    }
-
-    public int getCurrentWeek() {
-        return mCurrentWeek;
-    }
-
-    public void setCurrentWeek(int currentWeek) {
-        mCurrentWeek = currentWeek;
-    }
-
-    public int getStartWeek() {
-        return mStartWeek;
-    }
-
-    public void setStartWeek(int startWeek) {
-        mStartWeek = startWeek;
-    }
-
-    public int getEndWeek() {
-        return mEndWeek;
-    }
-
-    public void setEndWeek(int endWeek) {
-        mEndWeek = endWeek;
+    public void setIndividualStanding(int teamId, int pos) {
+        mStandings[pos] = teamId;
     }
 }

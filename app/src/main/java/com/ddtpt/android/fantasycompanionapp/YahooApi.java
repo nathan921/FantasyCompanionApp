@@ -35,6 +35,8 @@ import retrofit.http.Path;
  */
 public interface YahooApi {
 
+    ///fantasy/v2/RESOURCE/GAMEID.l.LEAGUEID.t.TEAMID/SUBRESOURCE/<PARAM_STRING,PARAM_VALUE>;
+
     //TODO: need to store the values that come back from here for future calls
     @GET("/fantasy/v2/users;use_login=1?format=json")
     void getUserData(Callback<JsonElement> callback);
@@ -46,8 +48,8 @@ public interface YahooApi {
     void getStandings(Callback<JsonElement> callback);
 
     //Gets League Info and Scoring Values
-    @GET("/fantasy/v2/league/331.l.106320/settings?format=json")
-    void getLeagueSettings(Callback<JsonElement> callback);
+    @GET("/fantasy/v2/league/{game_id}.l.{league_id}/settings?format=json")
+    void getLeagueSettings(@Path("game_id") String game_id, @Path("league_id") String league_id, Callback<JsonElement> callback);
 
     @GET("/fantasy/v2/team/331.l.106320.t.1/roster/players;week=15?format=json")
     void getTeamRoster(Callback<JsonElement> callback);

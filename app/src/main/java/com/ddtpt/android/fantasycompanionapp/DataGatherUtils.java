@@ -116,7 +116,7 @@ private Context mContext;
     private JsonDataService mJsonDataService;
     private JsonFactory mJsonFactory;
     private RestAdapter mRestAdapter;
-    private Gson mGson;
+    private JsonFactory mJsonFactory;
 
     String mToken, mSecret, mOAuthVerifier;
 
@@ -314,5 +314,23 @@ private Context mContext;
             new OAuthGetAccessTokenTask().execute();
         }
     }
+
+    public void populateLeagueData(String game_id, String league_id) {
+        mService.getLeagueSettings(game_id, league_id, new Callback<JsonElement>() {
+            @Override
+            public void success(JsonElement jsonElement, Response response) {
+                JsonFactory.League newLeague = mJsonFactory.new League();
+                Gson gson = new GsonBuilder().create();
+                newLeague = gson.fromJson(jsonElement, JsonFactory.base.class).getFantasyContent().getLeague().get(0);
+                //TODO: Bus this shit back to the Fragment
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
 
 }
