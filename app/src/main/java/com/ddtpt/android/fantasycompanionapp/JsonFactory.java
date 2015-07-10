@@ -2428,7 +2428,7 @@ public class JsonFactory {
 
             JsonArray selPosArray = json.getAsJsonArray().get(1).getAsJsonObject().get("selected_position").getAsJsonArray();
             Selected_position selectedPosition = new Selected_position();
-            for (JsonElement element : array) {
+            for (JsonElement element : selPosArray) {
                 if (element.isJsonObject()) {
                     JsonObject obj = element.getAsJsonObject();
                     if (obj.has("coverage_type")) {

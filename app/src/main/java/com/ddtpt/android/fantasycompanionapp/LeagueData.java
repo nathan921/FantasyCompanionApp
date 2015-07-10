@@ -33,8 +33,9 @@ public class LeagueData {
     }
 
     public JsonFactory.Team getTeamByTeamId(int teamId) {
+        String id = Integer.toString(teamId);
         for (JsonFactory.Team t : mTeams) {
-            if (t.getTeam_id().equals(teamId)) {
+            if (t.getTeam_id().equals(id)) {
                 return t;
             }
         }

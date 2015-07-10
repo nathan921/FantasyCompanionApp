@@ -12,7 +12,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:clickable="true"
+        android:background="@drawable/roster_selector_row"
+        android:padding="8dp">
 
         <Button
             android:id="@+id/position"
@@ -31,11 +33,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/position"
-            android:layout_alignTop="@+id/position"
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="Aaron Rodgers"
-            android:textSize="12pt"
+            android:textSize="10pt"
             android:textColor="@color/my_primary_dark"
             />
 
@@ -64,13 +65,25 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/fantasyScore"
             android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
+            android:layout_alignBaseline="@+id/name"
             android:text="28.84"
             android:textColor="@color/my_primary_dark"
-            android:textSize="16pt"
+            android:textSize="10pt"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fantasyProjectedScore"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/fantasyScore"
+            android:layout_alignRight="@+id/fantasyScore"
+            android:text="17.89"
+            android:textSize="8pt"
+            android:textColor="@color/light_blue_600"
             />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
