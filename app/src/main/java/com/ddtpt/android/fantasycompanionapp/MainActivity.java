@@ -61,6 +61,7 @@ public abstract class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDataGatherUtils = new DataGatherUtils(this);
+        LeagueData.get(this).addTeam(mDataGatherUtils.testJsonParsing());
 
         mBus = BusProvider.getInstance();
         mBus.register(this);

@@ -16,7 +16,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Bus;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -114,7 +121,6 @@ private Context mContext;
     private Bus mBus;
     private com.ddtpt.android.fantasycompanionapp.YahooApi mService;
     private JsonDataService mJsonDataService;
-    private JsonFactory mJsonFactory;
     private RestAdapter mRestAdapter;
     private JsonFactory mJsonFactory;
 
@@ -149,18 +155,35 @@ private Context mContext;
             mHasAccessToken = true;
         }
 
-        testJsonParsing();
+
     }
 
-    private void testJsonParsing() {
-        GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(JsonFactory.Team.class, mJsonFactory.new TeamDeserializer());
-        Gson gson = gb.create();
+    public JsonFactory.Team testJsonParsing() {
+//        GsonBuilder gb = new GsonBuilder();
+//        gb.registerTypeAdapter(JsonFactory.Team.class, mJsonFactory.new TeamDeserializer());
+//        Gson gson = gb.create();
 
-        JsonElement jsonElement = (JsonElement) new JsonParser().parse(TEAM_JSON);
-        JsonArray array = jsonElement.getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray();
-        JsonFactory.Team team = gson.fromJson(array, JsonFactory.Team.class);
+//        JsonElement jsonElement = (JsonElement) new JsonParser().parse(TEAM_JSON);
+//        JsonArray array = jsonElement.getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray();
+//        JsonFactory.Team team = gson.fromJson(array, JsonFactory.Team.class);
         //TODO: to set the managers/image/etc, write a method to pull the data from the original JSON and then do simple fromJson with the class.
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(JsonFactory.Team.class, mJsonFactory.new TeamDeserializer())
+                .registerTypeAdapter(JsonFactory.Player[].class, mJsonFactory.new PlayersDeserializer())
+                .create();
+        //Remove next line
+        JsonElement element = new JsonParser().parse(ROSTER_PLAYERS_JSON);
+        JsonArray array = mJsonFactory.getTeamElementOfRoster(element);
+        JsonFactory.Team team = gson.fromJson(array, JsonFactory.Team.class);
+
+        JsonFactory.Roster roster;
+        roster = gson.fromJson(mJsonFactory.getRosterJson(element), JsonFactory.Roster.class);
+        roster.setPlayers(new ArrayList<>(Arrays.asList(gson.fromJson(mJsonFactory.getPlayersFromRoster(element), JsonFactory.Player[].class))));
+        team.setRoster(roster);
+
+        return team;
+
 
     }
 
@@ -323,6 +346,25 @@ private Context mContext;
                 Gson gson = new GsonBuilder().create();
                 newLeague = gson.fromJson(jsonElement, JsonFactory.base.class).getFantasyContent().getLeague().get(0);
                 //TODO: Bus this shit back to the Fragment
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    public void setTeamWithRoster(String game_id, String league_id, String team_id) {
+        mService.getTeamRoster(game_id, league_id, team_id, new Callback<JsonElement>() {
+            @Override
+            public void success(JsonElement jsonElement, Response response) {
+                JsonFactory.Team newTeam = mJsonFactory.new Team();
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(JsonFactory.Team.class, mJsonFactory.new TeamDeserializer())
+                        .create();
+                JsonArray array = mJsonFactory.getTeamElementOfRoster(jsonElement);
+                gson.fromJson(array, JsonFactory.Team.class);
             }
 
             @Override

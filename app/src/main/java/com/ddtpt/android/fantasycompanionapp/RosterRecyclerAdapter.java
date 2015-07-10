@@ -8,14 +8,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by e228596 on 6/17/2015.
  */
 public class RosterRecyclerAdapter extends RecyclerView.Adapter<RosterRecyclerAdapter.RosterViewHolder> {
-    private ArrayList<PlayerData> playerList;
+    private List<JsonFactory.Player> playerList;
 
-    public RosterRecyclerAdapter(ArrayList<PlayerData> players) {
+    public RosterRecyclerAdapter(List<JsonFactory.Player> players) {
         playerList = players;
     }
 
@@ -27,11 +28,11 @@ public class RosterRecyclerAdapter extends RecyclerView.Adapter<RosterRecyclerAd
 
     @Override
     public void onBindViewHolder(RosterViewHolder holder, int position) {
-        PlayerData curPlayer = playerList.get(position);
-        holder.vPlayerName.setText(curPlayer.getPlayerName());
-        holder.vPlayerNumber.setText(String.valueOf(curPlayer.getPlayerNumber()));
-        holder.vPlayerGameData.setText(curPlayer.getPlayerGameDetails());
-        holder.vPlayerFantasyPoints.setText(Double.toString(curPlayer.getPlayerFantasyPoints()));
+        JsonFactory.Player curPlayer = playerList.get(position);
+        holder.vPlayerName.setText(curPlayer.getName().getFull());
+        holder.vPlayerNumber.setText(String.valueOf(curPlayer.getUniform_number()));
+        //holder.vPlayerGameData.setText(curPlayer.getPlayerGameDetails());
+        //holder.vPlayerFantasyPoints.setText(Double.toString(curPlayer.getPlayerFantasyPoints()));
     }
 
     @Override

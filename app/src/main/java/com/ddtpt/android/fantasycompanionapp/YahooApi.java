@@ -51,8 +51,8 @@ public interface YahooApi {
     @GET("/fantasy/v2/league/{game_id}.l.{league_id}/settings?format=json")
     void getLeagueSettings(@Path("game_id") String game_id, @Path("league_id") String league_id, Callback<JsonElement> callback);
 
-    @GET("/fantasy/v2/team/331.l.106320.t.1/roster/players;week=15?format=json")
-    void getTeamRoster(Callback<JsonElement> callback);
+    @GET("/fantasy/v2/team/{game_id}.l.{league_id}.t.{team_id}/roster/players?format=json")
+    void getTeamRoster(@Path("game_id") String game_id, @Path("league_id") String league_id, @Path("team_id") String team_id, Callback<JsonElement> callback);
 
     @GET("/fantasy/v2/league/331.l.106320/scoreboard;week=15?format=json")
     void getScoreboard(Callback<JsonElement> callback);

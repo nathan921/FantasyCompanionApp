@@ -9,23 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Arrays;
+
 /**
  * Created by e228596 on 6/17/2015.
  */
 public class RosterListFragment extends Fragment {
-    private TeamData mTeam;
+    private JsonFactory.Team mTeam;
     private static String TAG = "RosterListFragment";
     private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //mTeam = DataStore.get(getActivity()).getLeague().getTeamByTeamId(1);
-        if (mTeam == null) {
-            mTeam = new TeamData();
-            mTeam.addPlayerToTeam(new PlayerData("Detlef Nguyen", "QB", "DEN @ JEW 11AM", 12, 15.35));
-            mTeam.addPlayerToTeam(new PlayerData("Bill Bangbus", "WR", "ATL @ ASS 2PM", 3, 7.65));
-        }
+        mTeam = LeagueData.get(getActivity()).getTeamByTeamId(1);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class RosterListFragment extends Fragment {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         mRecyclerView.addItemDecoration(itemDecoration);
 
-        RosterRecyclerAdapter adapter = new RosterRecyclerAdapter(mTeam.getTeamPlayers());
+        RosterRecyclerAdapter adapter = new RosterRecyclerAdapter(mTeam.getRoster().getPlayers());
         mRecyclerView.setAdapter(adapter);
 
         return v;

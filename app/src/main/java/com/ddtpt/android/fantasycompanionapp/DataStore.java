@@ -12,8 +12,6 @@ public class DataStore {
     private static final String TAG = "DataStore";
     private static final String FILENAME = "fantasy.json";
 
-    private LeagueData mLeague;
-
     private static DataStore sDataStore;
     private Context mAppContext;
 
@@ -29,12 +27,5 @@ public class DataStore {
             sDataStore = new DataStore(c.getApplicationContext());
         }
         return sDataStore;
-    }
-
-    public LeagueData getLeague() {
-        if (mLeague == null) {
-            mLeague = new LeagueData();
-        }
-        return mLeague;
     }
 }

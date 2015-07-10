@@ -1,5 +1,7 @@
 package com.ddtpt.android.fantasycompanionapp;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -10,6 +12,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,14 +120,18 @@ public class JsonFactory {
     }
 
     public class Eligible_positions {
-        private String position;
+        private List<String> position;
 
-        public String getPosition ()
+        public Eligible_positions(List<String> list) {
+            position = list;
+        }
+
+        public List<String> getPosition ()
         {
             return position;
         }
 
-        public void setPosition (String position)
+        public void setPosition (List<String> position)
         {
             this.position = position;
         }
@@ -868,6 +875,26 @@ public class JsonFactory {
 
         private String editorial_player_key;
 
+        private String has_player_notes;
+
+        private String status;
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getHas_player_notes() {
+            return has_player_notes;
+        }
+
+        public void setHas_player_notes(String has_player_notes) {
+            this.has_player_notes = has_player_notes;
+        }
+
         public String getEditorial_team_full_name ()
         {
             return editorial_team_full_name;
@@ -1140,7 +1167,7 @@ public class JsonFactory {
     }
 
     public class Roster  {
-        private Players players;
+        private ArrayList<Player> players;
 
         private String is_editable;
 
@@ -1148,12 +1175,12 @@ public class JsonFactory {
 
         private String coverage_type;
 
-        public Players getPlayers ()
+        public ArrayList<Player> getPlayers ()
         {
             return players;
         }
 
-        public void setPlayers (Players players)
+        public void setPlayers (ArrayList<Player> players)
         {
             this.players = players;
         }
@@ -1914,7 +1941,7 @@ public class JsonFactory {
 
         private Team_logo_ team_logos;
 
-        //private Roster_adds roster_adds;
+        private Roster_adds roster_adds;
 
         private String team_id;
 
@@ -1925,14 +1952,6 @@ public class JsonFactory {
         private Roster roster;
 
         private int rank;
-
-//        public Roster getRoster() {
-//            return roster;
-//        }
-//
-//        public void setRoster(Roster roster) {
-//            this.roster = roster;
-//        }
 
         public Roster getRoster() {
             return roster;
@@ -2040,15 +2059,15 @@ public class JsonFactory {
             this.team_logos = team_logos;
         }
 //
-//        public Roster_adds getRoster_adds ()
-//        {
-//            return roster_adds;
-//        }
-//
-//        public void setRoster_adds (Roster_adds roster_adds)
-//        {
-//            this.roster_adds = roster_adds;
-//        }
+        public Roster_adds getRoster_adds ()
+        {
+            return roster_adds;
+        }
+
+        public void setRoster_adds (Roster_adds roster_adds)
+        {
+            this.roster_adds = roster_adds;
+        }
 
         public String getTeam_id ()
         {
@@ -2080,11 +2099,6 @@ public class JsonFactory {
             this.waiver_priority = waiver_priority;
         }
 
-        @Override
-        public String toString()
-        {
-            return ""; //ClassPojo [clinched_playoffs = "+clinched_playoffs+", number_of_moves = "+number_of_moves+", managers = "+managers+", league_scoring_type = "+league_scoring_type+", is_owned_by_current_login = "+is_owned_by_current_login+", team_key = "+team_key+", name = "+name+", number_of_trades = "+number_of_trades+", team_logos = "+team_logos+", roster_adds = "+roster_adds+", team_id = "+team_id+", url = "+url+", waiver_priority = "+waiver_priority+"]";
-        }
     }
 
     public class Teams {
@@ -2287,6 +2301,7 @@ public class JsonFactory {
             // .get("0").getAsJsonObject().get("team").getAsJsonArray().get(0).getAsJsonArray()
             // .get(0).getAsJsonObject().has("team_ass")
             Team team = new Team();
+            Gson gson = new GsonBuilder().create();
             for (JsonElement element : arrayOfObjects) {
                 if (element.isJsonObject()) {
                     JsonObject obj = element.getAsJsonObject();
@@ -2310,10 +2325,155 @@ public class JsonFactory {
                         team.setClinched_playoffs(obj.get("clinched_playoffs").getAsString());
                     } else if (obj.has("league_scoring_type")) {
                         team.setLeague_scoring_type(obj.get("league_scoring_type").getAsString());
+                    } else if (obj.has("managers")) {
+                        Manager_ manager = gson.fromJson(obj.get("managers").getAsJsonArray().get(0).getAsJsonObject().get("manager").getAsJsonObject(), Manager_.class);
+                        team.setManagers(manager);
+                    } else if (obj.has("roster_adds")) {
+                        Roster_adds rosterAdds = gson.fromJson(obj.get("roster_adds").getAsJsonObject(), Roster_adds.class);
+                        team.setRoster_adds(rosterAdds);
+                    } else if (obj.has("team_logos")) {
+                        Team_logo_ logoData = gson.fromJson(obj.get("team_logos")
+                                .getAsJsonArray().get(0).getAsJsonObject()
+                                .get("team_logo").getAsJsonObject(), Team_logo_.class);
+                        team.setTeam_logos(logoData);
                     }
                 }
             }
             return team;
         }
+    }
+
+    public class PlayersDeserializer implements JsonDeserializer<Player[]> {
+
+        @Override
+        public Player[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Player[] players = {};
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Player.class, new PlayerDeserializer())
+                    .create();
+
+            if (json.isJsonObject()) {
+                JsonObject playersJson = json.getAsJsonObject();
+                int total = playersJson.get("count").getAsInt();
+                players = new Player[total];
+                for (int i = 0; i < total; i++) {
+                    Player newPlayer;
+                    newPlayer = gson.fromJson(playersJson.get(Integer.toString(i))
+                            .getAsJsonObject().get("player")
+                            .getAsJsonArray(), Player.class);
+                    players[i] = newPlayer;
+                }
+            }
+            return players;
+        }
+
+    }
+
+    public class PlayerDeserializer implements JsonDeserializer<Player> {
+
+        @Override
+        public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Player player = new Player();
+            Gson gson = new GsonBuilder().create();
+            JsonArray array = json.getAsJsonArray().get(0).getAsJsonArray();
+            for (JsonElement element : array) {
+                if(element.isJsonObject()) {
+                    JsonObject obj = element.getAsJsonObject();
+                    if (obj.has("player_key")) {
+                        player.setPlayer_key(obj.get("player_key").getAsString());
+                    } else if (obj.has("player_id")) {
+                        player.setPlayer_id(obj.get("player_id").getAsString());
+                    } else if (obj.has("name")) {
+                        Name name = gson.fromJson(obj.get("name").getAsJsonObject(), Name.class);
+                        player.setName(name);
+                    } else if (obj.has("editorial_player_key")) {
+                        player.setEditorial_player_key(obj.get("editorial_player_key").getAsString());
+                    } else if (obj.has("editorial_team_key")) {
+                        player.setEditorial_team_key(obj.get("editorial_team_key").getAsString());
+                    } else if (obj.has("editorial_team_full_name")) {
+                        player.setEditorial_team_full_name(obj.get("editorial_team_full_name").getAsString());
+                    } else if (obj.has("editorial_team_abbr")) {
+                        player.setEditorial_team_abbr(obj.get("editorial_team_abbr").getAsString());
+                    } else if (obj.has("bye_weeks")) {
+                        Bye_weeks byeWeeks = gson.fromJson(obj.get("bye_weeks").getAsJsonObject(), Bye_weeks.class);
+                        player.setBye_weeks(byeWeeks);
+                    } else if (obj.has("uniform_number")) {
+                        player.setUniform_number(obj.get("uniform_number").getAsString());
+                    } else if (obj.has("display_position")) {
+                        player.setDisplay_position(obj.get("display_position").getAsString());
+                    } else if (obj.has("image_url")) {
+                        player.setImage_url(obj.get("image_url").getAsString());
+                    } else if (obj.has("is_undroppable")) {
+                        player.setIs_undroppable(obj.get("is_undroppable").getAsString());
+                    } else if (obj.has("position_type")) {
+                        player.setPosition_type(obj.get("position_type").getAsString());
+                    } else if (obj.has("eligible_positions")) {
+                        JsonArray arrayOfPositions = obj.get("eligible_positions").getAsJsonArray();
+                        List<String> posList = new ArrayList<>();
+                        for(JsonElement pos : arrayOfPositions) {
+                            if (pos.isJsonObject()) {
+                                posList.add(pos.getAsJsonObject().get("position").getAsString());
+                            }
+                        }
+                        player.setEligible_positions(new Eligible_positions(posList));
+                    } else if (obj.has("has_player_notes")) {
+                        player.setHas_player_notes(obj.get("has_player_notes").getAsString());
+                    } else if (obj.has("status")) {
+                        player.setStatus(obj.get("status").getAsString());
+                    }
+
+
+                }
+            }
+
+            JsonArray selPosArray = json.getAsJsonArray().get(1).getAsJsonObject().get("selected_position").getAsJsonArray();
+            Selected_position selectedPosition = new Selected_position();
+            for (JsonElement element : array) {
+                if (element.isJsonObject()) {
+                    JsonObject obj = element.getAsJsonObject();
+                    if (obj.has("coverage_type")) {
+                        selectedPosition.setCoverage_type(obj.get("coverage_type").getAsString());
+                    }
+                    if (obj.has("week")) {
+                        selectedPosition.setWeek(obj.get("week").getAsString());
+                    }
+                    if (obj.has("position")) {
+                        selectedPosition.setPosition(obj.get("position").getAsString());
+                    }
+                }
+            }
+            player.setSelected_position(selectedPosition);
+            player.setIs_editable(json.getAsJsonArray().get(3).getAsJsonObject().get("is_editable").getAsString());
+            return player;
+        }
+    }
+
+    public JsonArray getTeamElementOfRoster(JsonElement element) {
+        JsonArray array = element.getAsJsonObject()
+                .get("fantasy_content").getAsJsonObject()
+                .get("team").getAsJsonArray()
+                .get(0).getAsJsonArray();
+        return array;
+    }
+
+    public JsonObject getRosterJson(JsonElement element) {
+        JsonObject roster = element.getAsJsonObject()
+                .get("fantasy_content").getAsJsonObject()
+                .get("team").getAsJsonArray()
+                .get(1).getAsJsonObject()
+                .get("roster").getAsJsonObject();
+
+        return roster;
+    }
+
+    public JsonObject getPlayersFromRoster(JsonElement element) {
+        JsonObject obj = element.getAsJsonObject()
+                .get("fantasy_content").getAsJsonObject()
+                .get("team").getAsJsonArray()
+                .get(1).getAsJsonObject()
+                .get("roster").getAsJsonObject()
+                .get("0").getAsJsonObject()
+                .get("players").getAsJsonObject();
+        return obj;
     }
 }

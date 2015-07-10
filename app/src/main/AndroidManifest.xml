@@ -11,15 +11,19 @@
         <activity android:name=".StandingsListActivity" android:launchMode="singleTask">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+
                 <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="yffa"></data>
             </intent-filter>
         </activity>
-        <activity android:name=".RosterListActivity" ></activity>
+        <activity android:name=".RosterListActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ScoringListActivity"></activity>
 
     </application>

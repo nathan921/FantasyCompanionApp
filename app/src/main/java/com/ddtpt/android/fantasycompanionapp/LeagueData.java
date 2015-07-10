@@ -1,11 +1,16 @@
 package com.ddtpt.android.fantasycompanionapp;
 
+import android.content.Context;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by e228596 on 6/17/2015.
  */
 public class LeagueData {
+    private static LeagueData sLeagueData;
 
     JsonFactory.League mLeagueData;
     ArrayList<JsonFactory.Team> mTeams;
@@ -13,11 +18,18 @@ public class LeagueData {
     int[] mStandings;
     JsonFactory mJsonFactory;
 
-    public LeagueData() {
+    private LeagueData(Context context) {
         mJsonFactory = new JsonFactory();
         mLeagueData = mJsonFactory.new League();
-        mTeams = new ArrayList<>();
         mScoreboard = mJsonFactory.new Scoreboard();
+        mTeams = new ArrayList<JsonFactory.Team>();
+    }
+
+    public static LeagueData get(Context c) {
+        if (sLeagueData == null) {
+            sLeagueData = new LeagueData(c.getApplicationContext());
+        }
+        return sLeagueData;
     }
 
     public JsonFactory.Team getTeamByTeamId(int teamId) {
@@ -29,7 +41,11 @@ public class LeagueData {
         return null;
     }
 
-    public ArrayList<JsonFactory.Team> getTeams() {
+    public void addTeam(JsonFactory.Team team) {
+        mTeams.add(team);
+    }
+
+    public List<JsonFactory.Team> getTeams() {
         return mTeams;
     }
 
